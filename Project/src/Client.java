@@ -9,13 +9,13 @@ public class Client {
         Socket socket = null;
         Scanner scanner = new Scanner(System.in);
         try {
-            socket = new Socket("localhost", 9999); //10.2.0.121
+            socket = new Socket("localhost", 9999); 
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             while (true){
                 System.out.print("보내기 >> "); //프롬프트
                 String outputMessage = scanner.nextLine();
-                if (outputMessage.equalsIgnoreCase("bye")){
+                if (outputMessage.equalsIgnoreCase("!!bye!!")){
                     out.write(outputMessage+"\n");
                     out.flush();
                     break;

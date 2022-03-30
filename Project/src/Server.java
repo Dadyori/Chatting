@@ -20,7 +20,7 @@ public class Server {
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             while (true){
                 String inputMessage = in.readLine();
-                if (inputMessage.equalsIgnoreCase("bye")) {
+                if (inputMessage.equalsIgnoreCase("!bye")) {
                     System.out.println("클라이언트에서 연결 종료");
                     break;
                 }
