@@ -83,12 +83,15 @@ public class Client extends JFrame{
     public void connet() {
         try {
             socket = new Socket("localhost", 9999);
+            in=new DataInputStream(socket.getInputStream());
+            out=new DataOutputStream(socket.getOutputStream());
             connectStatus=true;
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    /*
     public void ioSetting() {
         try {
             in = new DataInputStream(socket.getInputStream());
@@ -97,7 +100,7 @@ public class Client extends JFrame{
             e.printStackTrace();
         }
     }
-
+    */
     public void closeAll() {
         endChat=true;
         try {
@@ -151,7 +154,6 @@ public class Client extends JFrame{
     }
 
     public Client() {
-        ioSetting();
         ClientFrame();
     }
 
