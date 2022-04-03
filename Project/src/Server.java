@@ -4,42 +4,93 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Server {
-    public static void main(String[] args) {
-        BufferedReader in = null;
-        BufferedWriter out = null;
-        ServerSocket listener = null;
-        Socket socket = null;
-        Scanner scanner = new Scanner(System.in); //키보드에서 읽을 Scanner 객체
+    private DataInputStream in;
+    private DataOutputStream out;
+    private ServerSocket listener;
+    private Socket socket;
 
-        try{
+    public void serverSetting(){
+        try {
             listener = new ServerSocket(9999);
-            System.out.println("----- 연결 대기중 -----");
-            socket=listener.accept(); //연결요청대기
-            System.out.println("연결되었습니다");
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            while (true){
-                String inputMessage = in.readLine();
-                if (inputMessage.equalsIgnoreCase("!bye")) {
-                    System.out.println("클라이언트에서 연결 종료");
-                    break;
-                }
-                System.out.println("클라이언트: "+inputMessage);
-                System.out.print("보내기 >> "); //프롬프트
-                String outputMessage = scanner.nextLine(); //한행읽기
-                out.write(outputMessage+"\n"); //키보드에서 읽은 문자열 전송
-                out.flush(); //out 스트림버퍼의 모든 문자열 전송
-            }
-        } catch (IOException e){
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                scanner.close();
-                socket.close();
-                listener.close();
-            } catch (IOException e){
-                System.out.println("채팅 중 오류가 발생하였습니다.");
-            }
+            System.out.println("---- 연결 대기 중 ----");
+            socket = listener.accept();
+            System.out.println("연결되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    public void ioSetting() {
+        try {
+            in=new DataInputStream(socket.getInputStream());
+            out=new DataOutputStream(socket.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeAll(){
+        try{
+            listener.close();
+            socket.close();
+            in.close();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dataAccept() {
+        new Thread(new Runnable() {
+            boolean isThread = true;
+            @Override
+            public void run() {
+                while (isThread) {
+                    try {
+                        String data = in.readUTF();
+                        if (data.equals("!bye"))
+                            isThread = false;
+                        else
+                            System.out.println("Client : "+data);
+                    } catch (Exception e){
+                    }
+                }
+                closeAll();
+                System.out.println("종료되었습니다.");
+            }
+        }).start();
+    }
+
+    public void dataSend() {
+        new Thread(new Runnable() {
+            Scanner scanner = new Scanner(System.in);
+            boolean isThread = true;
+            @Override
+            public void run() {
+                while (isThread){
+                    try {
+                        System.out.print("보내기 >> ");
+                        String data = scanner.nextLine();
+                        if (data.equals("!bye"))
+                            isThread=false;
+                        else
+                            out.writeUTF(data);
+                    } catch (Exception e ){
+
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public Server() {
+        serverSetting();
+        ioSetting();
+        dataAccept();
+        dataSend();
+    }
+
+    public static void main(String[] args) {
+        new Server();
     }
 }
