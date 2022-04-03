@@ -18,6 +18,11 @@ public class Client extends JFrame{
     JTextArea text;
     JTextField textField;
 
+    public Client() {
+        startService();
+        ClientFrame();
+    }
+
     public void ClientFrame () {
         setTitle("클라이언트 채팅 서버");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,13 +70,12 @@ public class Client extends JFrame{
 
         setVisible(true);
         setResizable(false);
-        startService();
         textField.requestFocus();
     }
 
     public void startService() {
         try {
-            socket=new Socket("localhost", 9999);
+            socket=new Socket("211.202.97.118", 8000);
             in = new DataInputStream(socket.getInputStream());
             out= new DataOutputStream(socket.getOutputStream());
             new Thread(new Runnable() {
@@ -132,6 +136,7 @@ public class Client extends JFrame{
                 stop=true;
                 closeAll();
             }else {
+                out=new DataOutputStream(socket.getOutputStream());
                 out.writeUTF(data);
                 textField.setText("");
                 textField.requestFocus();
@@ -160,9 +165,6 @@ public class Client extends JFrame{
         }
     }
 
-    public Client() {
-        ClientFrame();
-    }
 
     public static void main(String[] args) {
         new Client();
