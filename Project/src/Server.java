@@ -15,6 +15,7 @@ public class Server extends JFrame{
     private Socket socket;
     private boolean connectStatus;
     private boolean stop;
+    private boolean endChat;
 
     JTextArea text;
     JTextField textField;
@@ -91,7 +92,7 @@ public class Server extends JFrame{
             while (! connectStatus){
                 text.append("------------------------------- 연결 대기 중 -------------------------------\n");
                 socket = listener.accept();
-                text.append("----------------- CLIENT가 접속하였습니다. -----------------\n");
+                text.append("--------------------- CLIENT가 접속하였습니다. ---------------------\n");
                 connectStatus=true;
             }
 
@@ -110,6 +111,7 @@ public class Server extends JFrame{
     }
 
     public void closeAll(){
+        endChat=true;
         try{
             listener.close();
             socket.close();
@@ -121,17 +123,20 @@ public class Server extends JFrame{
     }
 
     public void dataAccept() {
+        endChat=false;
         try {
-            while (!stop) {
+            while (!stop && !endChat) {
                 String data = in.readUTF();
                 text.append("CLIENT >> "+data+"\n");
             }
+            connectStatus=false;
             closeAll();
         } catch (EOFException e) {
             text.append("CLIENT 접속 해제\n");
-            connectStatus=false;
+            endChat=true;
         } catch (SocketException e){
             text.append("CLIENT 접속 해제\n");
+            endChat=true;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,7 +145,8 @@ public class Server extends JFrame{
     public void dataSend() {
         try {
             String data = textField.getText();
-            if (data.isBlank()){
+            if (data.isBlank() || endChat){
+                textField.setText("");
                 return;
             }
             text.append("나 >> "+data+"\n");
@@ -149,7 +155,7 @@ public class Server extends JFrame{
                 textField.setText("");
                 textField.requestFocus();
             }
-            if (data.equals("!bye")){
+            else if (data.equals("!bye")){
                 stop=true;
                 closeAll();
             }

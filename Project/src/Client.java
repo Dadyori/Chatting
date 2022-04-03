@@ -14,6 +14,7 @@ public class Client extends JFrame{
 
     private boolean connectStatus;
     private boolean stop;
+    private boolean endChat;
 
     JTextArea text;
     JTextField textField;
@@ -83,7 +84,7 @@ public class Client extends JFrame{
     public void connet() {
         try {
             socket = new Socket("localhost", 9999);
-            System.out.println("연결 성공");
+            connectStatus=true;
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -99,6 +100,7 @@ public class Client extends JFrame{
     }
 
     public void closeAll() {
+        endChat=true;
         try {
             socket.close();
             in.close();
@@ -111,7 +113,8 @@ public class Client extends JFrame{
     public void dataSend() {
         try {
             String data = textField.getText();
-            if (data.isBlank()){
+            if (data.isBlank() || endChat){
+                textField.setText("");
                 return;
             }
             text.append("나 >> "+data+"\n");
@@ -130,16 +133,18 @@ public class Client extends JFrame{
     }
 
     public void dataAccept() {
+        endChat=false;
         try {
-            while (!stop){
+            while (!stop && !endChat){
                 text.append("SERVER >> "+in.readUTF()+"\n");
             }
             closeAll();
         } catch (EOFException e){
-            text.append("서버 접속 해제\n");
-            connectStatus=false;
+            text.append("SERVER 접속 해제\n");
+            endChat=true;
         } catch (SocketException e) {
-            text.append("서버 접속 해제\n");
+            text.append("SERVER 접속 해제\n");
+            endChat=true;
         } catch (IOException e) {
             e.printStackTrace();
         }
