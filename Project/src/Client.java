@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Scanner;
 
 public class Client extends JFrame{
     private Socket socket;
@@ -71,15 +70,22 @@ public class Client extends JFrame{
     }
 
     public void startService() {
-        connet();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dataAccept();
-            }
-        }).start();
+        try {
+            socket=new Socket("localhost", 9999);
+            in = new DataInputStream(socket.getInputStream());
+            out= new DataOutputStream(socket.getOutputStream());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    dataAccept();
+                }
+            }).start();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
+    /*
     public void connet() {
         try {
             socket = new Socket("localhost", 9999);
@@ -90,6 +96,8 @@ public class Client extends JFrame{
             e.printStackTrace();
         }
     }
+
+     */
 
     /*
     public void ioSetting() {
@@ -150,7 +158,6 @@ public class Client extends JFrame{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public Client() {

@@ -72,7 +72,15 @@ public class Server extends JFrame{
 
     public void startService() {
         try {
-            serverSetting();
+            listener = new ServerSocket(9999);
+            while (! connectStatus){
+                text.append("------------------------------- 연결 대기 중 -------------------------------\n");
+                socket = listener.accept();
+                text.append("--------------------- CLIENT가 접속하였습니다. ---------------------\n");
+                in=new DataInputStream(socket.getInputStream());
+                out=new DataOutputStream(socket.getOutputStream());
+                connectStatus=true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +92,7 @@ public class Server extends JFrame{
         }).start();
     }
 
-
+/*
     public void serverSetting(){
         try {
             listener = new ServerSocket(9999);
@@ -102,6 +110,8 @@ public class Server extends JFrame{
             e.printStackTrace();
         }
     }
+
+ */
 /*
     public void ioSetting() {
         try {
@@ -173,7 +183,6 @@ public class Server extends JFrame{
 
     public Server() {
         ServerFrame();
-        serverSetting();
         startService();
     }
 
