@@ -152,7 +152,8 @@ public class Client extends JFrame{
         endChat=false;
         try {
             while (!stop && !endChat){
-                text.append("SERVER >> "+in.readUTF()+"\n");
+                String data = in.readUTF();
+                text.append("SERVER >> "+data+"\n");
             }
             closeAll();
         } catch (EOFException e){
