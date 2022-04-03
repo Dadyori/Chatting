@@ -78,6 +78,7 @@ public class Client extends JFrame{
             socket=new Socket("211.202.97.118", 8000);
             in = new DataInputStream(socket.getInputStream());
             out= new DataOutputStream(socket.getOutputStream());
+            connectStatus=true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -115,6 +116,7 @@ public class Client extends JFrame{
     */
     public void closeAll() {
         endChat=true;
+        connectStatus=false;
         try {
             socket.close();
             in.close();
@@ -136,7 +138,6 @@ public class Client extends JFrame{
                 stop=true;
                 closeAll();
             }else {
-                out=new DataOutputStream(socket.getOutputStream());
                 out.writeUTF(data);
                 textField.setText("");
                 textField.requestFocus();
@@ -164,7 +165,6 @@ public class Client extends JFrame{
             e.printStackTrace();
         }
     }
-
 
     public static void main(String[] args) {
         new Client();

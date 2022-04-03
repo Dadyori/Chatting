@@ -182,8 +182,8 @@ public class Server extends JFrame{
     }
 
     public Server() {
-        startService();
         ServerFrame();
+        startService();
     }
 
     public static void main(String[] args) {
