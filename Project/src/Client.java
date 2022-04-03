@@ -72,7 +72,6 @@ public class Client extends JFrame{
 
     public void startService() {
         connet();
-        ioSetting();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -152,6 +151,7 @@ public class Client extends JFrame{
     }
 
     public Client() {
+        ioSetting();
         ClientFrame();
     }
 

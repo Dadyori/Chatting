@@ -170,9 +170,9 @@ public class Server extends JFrame{
     }
 
     public Server() {
+        ioSetting();
         ServerFrame();
         serverSetting();
-        ioSetting();
         startService();
     }
 
